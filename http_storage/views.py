@@ -1,6 +1,42 @@
 import aiohttp_jinja2
+from aiohttp import web
+import os
+from http_storage.files_processing import file_writer, unique_hash, get_dir, simple_hash, file_sender, file_remover
 
 
-@aiohttp_jinja2.template('index.html')
+@aiohttp_jinja2.template('upload.html')
 async def index(request):
-    return {'text': 'Hello, world!'}
+    pass
+
+@aiohttp_jinja2.template('upload.html')
+async def upload(request):
+    pass
+
+
+async def upload_handler(request):
+    print(request.headers)
+    reader = await request.multipart()
+    field = await reader.next()
+    #assert field.name == 'file'
+    filename = field.filename
+
+    hashed_filename = simple_hash(filename)
+
+    await file_writer(hashed_filename, field)
+    return web.json_response({'status': 'uploaded', 'file_id': hashed_filename})
+
+
+async def download_handler(request):
+    hashed_filename = request.query['file_id']
+    headers = {f'Content-disposition': f'attachment; filename={hashed_filename}'}
+    file_path = os.path.join(get_dir(hashed_filename), hashed_filename)
+    return web.Response(body=file_sender(file_store_path=file_path), headers=headers, status=200)
+
+
+async def remove_handler(request):
+    hashed_filename = request.query['file_id']
+    try:
+        file_remover(hashed_filename)
+    except FileNotFoundError as error:
+        return web.json_response({'file_id': hashed_filename, 'status': 'file not found.'})
+    return web.json_response({'file_id': hashed_filename, 'status': 'file deleted.'})

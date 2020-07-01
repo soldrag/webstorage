@@ -2,6 +2,7 @@ import hashlib
 import os
 from datetime import datetime
 from http_storage.settings import BASE_DIR
+import aiohttp
 
 
 STORE_DIR_NAME = 'store'
@@ -23,16 +24,27 @@ def get_dir(hashed_filename: str) -> str:
     return file_store_path
 
 
-def file_writer(hashed_filename, file_store_path, file_object):
+async def file_writer(hashed_filename: str, file_object) -> str:
+    file_store_path = get_dir(hashed_filename)
     with open(os.path.join(file_store_path, hashed_filename), 'wb') as file:
-        file.write(file_object)
+        while True:
+            chunk = await file_object.read_chunk()
+            if not chunk:
+                break
+            file.write(chunk)
+    return hashed_filename
 
 
-def file_reader(hashed_filename: str, file_store_path: str):
-    with open(os.path.join(file_store_path, hashed_filename), 'rb') as file:
-        file_object = file.read()
-    return file_object
+@aiohttp.streamer
+async def file_sender(writer, file_store_path: str):
+    chunk_size = 2 ** 16
+    with open(file_store_path, 'rb') as file:
+        chunk = file.read(chunk_size)
+        while chunk:
+            await writer.write(chunk)
+            chunk = file.read(chunk_size)
 
 
-def file_remover(hash_filename: str, file_store_path: str):
-    os.remove(os.path.join(file_store_path, hash_filename))
+def file_remover(hashed_filename: str):
+    file_store_path = get_dir(hashed_filename)
+    os.remove(os.path.join(file_store_path, hashed_filename))
