@@ -12,5 +12,5 @@ if __name__ == '__main__':
     app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader(f'{BASE_DIR}/http_storage/templates'))
     setup_routes(app)
-    logging.basicConfig(level=logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
     web.run_app(app, host=SRV_HOST, port=SRV_PORT)

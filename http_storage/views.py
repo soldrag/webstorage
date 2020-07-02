@@ -9,11 +9,6 @@ HASH_TYPE = config['http_storage']['hash_type']
 
 
 @aiohttp_jinja2.template('upload.html')
-async def index(request):
-    pass
-
-
-@aiohttp_jinja2.template('upload.html')
 async def upload(request):
     pass
 
@@ -44,7 +39,7 @@ async def download_handler(request) -> web.json_response:
 async def remove_handler(request) -> web.json_response:
     hashed_filename = request.query['file_id']
     try:
-        file_remover(hashed_filename)
+        await file_remover(hashed_filename)
         return web.json_response({'file_id': hashed_filename, 'status': 'file deleted.'})
     except FileNotFoundError:
         return web.json_response({'file_id': hashed_filename, 'status': 'file not found.'})
