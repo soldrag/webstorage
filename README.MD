@@ -1,4 +1,4 @@
-## Simple aiohttp server for web file storage
+## Simple aiohttp server for file storage
 
 - For upload file, use form on /upload address, server return status and file_id in json response.
 
