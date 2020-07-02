@@ -36,7 +36,7 @@ async def file_writer(hashed_filename: str, file_object) -> str:
 
 
 @aiohttp.streamer
-async def file_sender(writer, file_store_path: str):
+async def file_sender(writer, file_store_path: str) -> None:
     chunk_size = 2 ** 16
     with open(file_store_path, 'rb') as file:
         chunk = file.read(chunk_size)
@@ -45,6 +45,6 @@ async def file_sender(writer, file_store_path: str):
             chunk = file.read(chunk_size)
 
 
-def file_remover(hashed_filename: str):
+def file_remover(hashed_filename: str) -> None:
     file_store_path = get_dir(hashed_filename)
     os.remove(os.path.join(file_store_path, hashed_filename))

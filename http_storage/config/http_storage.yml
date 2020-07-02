@@ -1,0 +1,5 @@
+server:
+  host: 0.0.0.0
+  port: 8080
+http_storage:
+  hash_type: 0  #0 - simple hash, 1 - unique hash

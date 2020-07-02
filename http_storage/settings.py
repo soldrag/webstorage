@@ -2,7 +2,7 @@ import pathlib
 import yaml
 
 BASE_DIR = pathlib.Path(__file__).parent.parent
-#config_path = BASE_DIR / 'config' / 'webstorage.yml'
+CONFIG_PATH = BASE_DIR / 'http_storage' / 'config' / 'http_storage.yml'
 
 
 def get_config(path):
@@ -10,4 +10,5 @@ def get_config(path):
         config = yaml.safe_load(f)
     return config
 
-#config = get_config(config_path)
+
+config = get_config(CONFIG_PATH)
