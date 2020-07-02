@@ -19,7 +19,8 @@ def unique_hash(file_name: str) -> str:
     """
     Unique hashing, return sha256 hash of filename+timestamp
     """
-    unique_name = f'{file_name}.{str(datetime.timestamp(datetime.now()))}'
+    timestamp = datetime.timestamp(datetime.now())
+    unique_name = f'{file_name}.{str(timestamp)}'
     return hashlib.sha256(unique_name.encode('utf8')).hexdigest()
 
 
